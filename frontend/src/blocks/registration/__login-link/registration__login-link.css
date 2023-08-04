@@ -1,0 +1,12 @@
+.registration__login-link {
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #FFFFFF;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.registration__login-link:hover {
+  opacity: .6;
+}

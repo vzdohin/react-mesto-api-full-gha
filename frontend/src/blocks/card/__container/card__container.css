@@ -1,0 +1,10 @@
+.card__container {
+  background-color: rgba(255, 255, 255, 1);
+  max-width: 246px;
+  padding: 25px 20px 26px 21px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}

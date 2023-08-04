@@ -1,0 +1,6 @@
+.popup__title_center{
+display: flex;
+min-width: 358px;
+margin: 0 auto 60px auto;
+text-align: center;
+}

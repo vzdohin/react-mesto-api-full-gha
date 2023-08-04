@@ -1,0 +1,10 @@
+.input-error-style {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  color: rgba(255, 0, 0, 1);
+  min-height: 30px;
+  text-align: left;
+}
