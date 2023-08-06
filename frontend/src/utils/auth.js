@@ -1,4 +1,4 @@
-export const url = 'http://localhost:4000';
+export const url = 'https://api.mesto-project.nomoreparties.co';
 const { JWT_SECRET } = process.env;
 
 const getResponseData = (res) => {

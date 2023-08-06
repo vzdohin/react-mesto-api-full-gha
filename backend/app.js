@@ -26,7 +26,7 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://mesto-project.nomoreparties.co',
   credentials: true,
 }));
 
@@ -44,6 +44,13 @@ app.use(express.json());
 app.use(cookieParser());
 // логер запросов
 app.use(requestLogger);
+
+// краш-тест сервера
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 // мидлвэры авторизации и создания пользователя
 app.post('/signin', celebrate({

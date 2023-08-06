@@ -88,7 +88,7 @@ class Api {
 }
 
 const api = new Api({
-  url: 'http://localhost:4000/',
+  url: 'https://api.mesto-project.nomoreparties.co/',
   headers: {
     // authorization: `Bearer ${localStorage.getItem("token")}`,
     Accept: "application/json",
