@@ -9,8 +9,8 @@
 
 ## Ссылки на проект
 
-IP-адрес 51.250.84.105
+IP-адрес: 51.250.84.105
 
-Frontend mesto-project.nomoreparties.co
+Frontend <mesto-project.nomoreparties.co>
 
-Backend api.mesto-project.nomoreparties.co
+Backend <api.mesto-project.nomoreparties.co>

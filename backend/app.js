@@ -18,7 +18,7 @@ const {
 } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 4001 } = process.env;
 
 const app = express();
 
