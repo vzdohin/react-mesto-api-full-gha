@@ -26,7 +26,7 @@ const app = express();
 app.use(helmet());
 
 app.use(cors({
-  origin: 'https://api.mesto-project.nomoreparties.co',
+  origin: 'https://mesto-project.nomoreparties.co',
   credentials: true,
 }));
 
