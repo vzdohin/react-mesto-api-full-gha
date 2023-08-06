@@ -1,4 +1,3 @@
-
 class Api {
   constructor({ url, headers }) {
     this._url = url;
@@ -11,31 +10,35 @@ class Api {
     return res.json();
   }
   getAllCards() {
-    return fetch(`${this._url}/cards`, {
+    return fetch(`${this._url}cards`, {
       method: "GET",
+      credentials: 'include',
       headers: this._headers,
 
     })
       .then((res) => this._getResponseData(res))
   }
   addNewCard({name, link}) {
-    return fetch(`${this._url}/cards`, {
+    return fetch(`${this._url}cards`, {
       method: "POST",
+      credentials: 'include',
       headers: this._headers,
       body: JSON.stringify({ name, link })
     })
       .then((res) => this._getResponseData(res))
   }
   getUserInfo() {
-    return fetch(`${this._url}/users/me`, {
+    return fetch(`${this._url}users/me`, {
       method: "GET",
+      credentials: 'include',
       headers: this._headers,
     })
       .then((res) => this._getResponseData(res))
   }
   addNewUserInfo(userInfo) {
-    return fetch(`${this._url}/users/me`, {
+    return fetch(`${this._url}users/me`, {
       method: "PATCH",
+      credentials: 'include',
       headers: this._headers,
       body: JSON.stringify({
         name: userInfo.name,
@@ -46,8 +49,9 @@ class Api {
 
   }
   deleteCard(cardId) {
-    return fetch(`${this._url}/cards/${cardId}`, {
+    return fetch(`${this._url}cards/${cardId}`, {
       method: "DELETE",
+      credentials: 'include',
       headers: this._headers,
 
     })
@@ -56,6 +60,7 @@ class Api {
   changeAvatar(data) {
     return fetch(`${this._url}users/me/avatar`, {
       method: "PATCH",
+      credentials: 'include',
       headers: this._headers,
       body: JSON.stringify({
         avatar: data.avatar,
@@ -67,12 +72,14 @@ class Api {
     if (!isLiked) {
       return fetch(`${this._url}cards/${cardId}/likes`, {
         method: "PUT",
+        credentials: 'include',
         headers: this._headers,
       })
         .then((res) => this._getResponseData(res))
     } else {
       return fetch(`${this._url}cards/${cardId}/likes`, {
         method: "DELETE",
+        credentials: 'include',
         headers: this._headers,
       })
         .then((res) => this._getResponseData(res))
@@ -81,10 +88,11 @@ class Api {
 }
 
 const api = new Api({
-  url: 'https://mesto.nomoreparties.co/v1/cohort-65/',
+  url: 'http://localhost:4000/',
   headers: {
-    authorization: 'ddc4e278-0407-4e45-bd07-0611ce12a4b8',
-    "content-type": "application/json"
+    // authorization: `Bearer ${localStorage.getItem("token")}`,
+    Accept: "application/json",
+    "Content-Type": "application/json",
   }
 });
 export default api;

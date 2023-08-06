@@ -6,6 +6,7 @@ const {
   getMyProfile,
   updateProfile,
   updateAvatar,
+  logout,
 } = require('../controllers/users');
 
 router.get('/users', getUsers);
@@ -27,5 +28,6 @@ router.patch('/users/me/avatar', celebrate({
     avatar: Joi.string().required().pattern(/^(http|https):\/\/(?:www\.)?[a-zA-Z0-9\.\-]+\/[a-zA-Z0-9\.\-_~:\/?#\[\]@!$&'()*+,;=]+/),
   }),
 }), updateAvatar);
+router.delete('/users/me', logout);
 
 module.exports = router;

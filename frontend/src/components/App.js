@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -15,6 +15,7 @@ import Login from './Login';
 import { ProtectedRoute } from './ProtectedRoute';
 import InfoTooltip from './InfoTooltip';
 import * as auth from '../utils/auth'
+
 function App() {
   const navigate = useNavigate();
   // состояния isOpen попаов
@@ -61,52 +62,48 @@ function App() {
     setSuccessPopupOpen(false)
     setRegistrationSuccess(false)
   }
-    // проверка токена
-    React.useEffect(() => {
-      const jwt = localStorage.getItem('jwt');
-      if (jwt && !isLoggedIn) {
-        auth.checkToken(jwt)
-          .then((res) => {
+  // проверка токена
+  React.useEffect(() => {
+    if (!isLoggedIn) {
+      auth.checkToken()
+        .then((res) => {
+          if (res) {
             setIsLoggedIn(true)
             navigate('/', { replace: true })
-            setEmailProfile(res.data.email)
+            setEmailProfile(res.email)
             // console.log(res.data.email)
-  
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      }
-    }, [])
+          } else { setIsLoggedIn(false) }
+        })
+        .catch(err => {
+          console.error(err);
+          // setIsLoggedIn(false)
+        })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   //забираем с сервера информацию о профиле (имя, описание, ссылка аватара)
   React.useEffect(() => {
-    api.getUserInfo()
-      .then(data => {
-        setCurrentUser(data)
-      })
-      .catch((err) => {
-        alert(`Ошибка: ${err}`)
-      })
-  }, [])
-  React.useEffect(() => {
-    api.getAllCards(cards).
-      then(data => {
-        setCards(data)
-      })
-      .catch((err) => {
-        alert(`Ошибка: ${err}`)
-      })
-  }, [])
+    if (isLoggedIn) {
+      Promise.all([api.getUserInfo(), api.getAllCards()])
+        .then(([userInfo, cardsData]) => {
+          setCurrentUser(userInfo);
+          setCards(cardsData);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  }, [isLoggedIn]);
 
   // обрабочик клика по лайку
   function handleCardLike(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
     api.changeLikeCardStatus(card._id, isLiked)
       .then((newCard) => {
         setCards((state) => state.map((c) => c._id === newCard._id ? newCard : c));
       })
       .catch((err) => {
-        alert(`Ошибка: ${err}`)
+        console.error(err);
       })
   }
   // обработчик удаления
@@ -116,7 +113,7 @@ function App() {
         setCards((state) => state.filter((c) => c._id !== card._id));
       })
       .catch((err) => {
-        alert(`Ошибка: ${err}`)
+        console.error(err);
       })
     // обработчик измененения имени и описания профиля 
   }
@@ -127,7 +124,7 @@ function App() {
         closeAllPopups()
       })
       .catch((err) => {
-        alert(`Ошибка: ${err}`)
+        console.error(err);
       })
   }
   // обработчик изменения аватара 
@@ -138,18 +135,18 @@ function App() {
         closeAllPopups()
       })
       .catch((err) => {
-        alert(`Ошибка: ${err}`)
+        console.error(err);
       })
   }
   // обработчик добавления карточки 
   function handleAddPlaceSubmit(newCard) {
-    api.addNewCard(newCard) //----------------------
+    api.addNewCard(newCard)
       .then((data) => {
-        setCards([data, ...cards])
+        setCards((state) => [data, ...state])
         closeAllPopups()
       })
       .catch((err) => {
-        alert(`Ошибка: ${err}`)
+        console.error(err);
       })
   }
 
@@ -173,10 +170,10 @@ function App() {
   // авторизация пользователя 
   function handleAuthorization(email, password) {
     auth.authorize(email, password)
-      .then(res => {
+      .then((res) => {
         if (res) {
           setIsLoggedIn(true);
-          localStorage.setItem('jwt', res.token)
+          // localStorage.setItem('jwt', res.token)
           setEmailProfile(email)
           navigate('/', { replace: true })
         }
@@ -187,14 +184,19 @@ function App() {
         console.log(err)
       })
   }
+
   //выход пользователя 
   function handleLogout() {
-    setIsLoggedIn(false);
-    localStorage.removeItem('jwt')
-    setEmailProfile('')
-    navigate('/sign-in', { replace: true })
+    auth.logout()
+      .then(() => {
+        setIsLoggedIn(false);
+        setEmailProfile('')
+        navigate('/sign-in', { replace: true })
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
-
   return (
     <>
       <div className="page">

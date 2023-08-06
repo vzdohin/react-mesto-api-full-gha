@@ -1,4 +1,5 @@
-export const url='https://auth.nomoreparties.co';
+export const url = 'http://localhost:4000';
+const { JWT_SECRET } = process.env;
 
 const getResponseData = (res) => {
   if (!res.ok) {
@@ -11,32 +12,42 @@ export const registr = (email, password) => {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
-      "Content-Type": "application/json" 
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({email, password})
+    credentials: 'include',
+    body: JSON.stringify({ email, password })
   })
-  .then((res)=> getResponseData(res))
+    .then((res) => getResponseData(res))
 }
 export const authorize = (email, password) => {
   return fetch(`${url}/signin`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
-      "Content-Type": "application/json" 
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify({email, password})
+    credentials: 'include',
+    body: JSON.stringify({ email, password })
   })
-  .then((res)=> getResponseData(res))
+    .then((res) => getResponseData(res))
 }
-export const checkToken = (token) => {
+
+export const checkToken = () => {
   return fetch(`${url}/users/me`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       "Content-Type": "application/json",
-      "Authorization" : `Bearer ${token}`
     },
-    // body: JSON.stringify({email, password})
+
   })
-  .then((res)=> getResponseData(res))
+    .then((res) => getResponseData(res))
+}
+export const logout = () => {
+  return fetch(`${url}/users/me`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+    .then((res) => getResponseData(res))
 }

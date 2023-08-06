@@ -9,10 +9,10 @@ const {
   BadRequestError,
   NotFoundError,
   ConfictRequestError,
-  UnauthorizedError,
+  // UnauthorizedError,
 } = require('../errors/errors');
 
-// const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 // логин
 module.exports.login = (req, res, next) => {
@@ -21,7 +21,7 @@ module.exports.login = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then(({ _id: userId }) => {
       // console.log(userId);
-      const token = jwt.sign({ userId }, 'super-strong-secret-key', { expiresIn: '7d' });
+      const token = jwt.sign({ userId }, NODE_ENV === 'production' ? JWT_SECRET : 'very-strong-key', { expiresIn: '7d' });
       res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
@@ -31,9 +31,14 @@ module.exports.login = (req, res, next) => {
         .status(STATUS_CODE_OK)
         .send({ token });
     })
-    .catch(() => next(new UnauthorizedError('Неправильные почта или пароль')));
+    // .catch(() => next(new UnauthorizedError('Неправильные почта или пароль')));
+    .catch(next);
 };
-
+// logout
+module.exports.logout = (req, res) => {
+  res.clearCookie('jwt');
+  res.send({ message: 'Вы успешно вышли' });
+};
 // создать пользователя
 module.exports.createUser = (req, res, next) => {
   const {
@@ -73,9 +78,10 @@ module.exports.createUser = (req, res, next) => {
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(STATUS_CODE_OK).send({ users }))
-    .catch(() => {
-      next(new UnauthorizedError('Вы не авторизованы '));
-    });
+    // .catch(() => {
+    //   next(new UnauthorizedError('Вы не авторизованы '));
+    // });
+    .catch(next);
 };
 
 // получить пользователя по айди
@@ -113,13 +119,14 @@ module.exports.updateProfile = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
-    .then((user) => res.status(STATUS_CODE_OK).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Переданы некорректные данные'));
-      }
-      next(err);
-    });
+    .then((user) => res.status(STATUS_CODE_OK).send(user))
+    // .catch((err) => {
+    //   if (err.name === 'ValidationError') {
+    //     return next(new BadRequestError('Переданы некорректные данные'));
+    //   }
+    //   next(err);
+    // });
+    .catch(next);
 };
 
 // обновить аватар
@@ -129,7 +136,7 @@ module.exports.updateAvatar = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь не найден');
     })
-    .then((ava) => res.status(STATUS_CODE_OK).send({ data: ava }))
+    .then((ava) => res.status(STATUS_CODE_OK).send(ava))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequestError('Переданы некоректные данные'));

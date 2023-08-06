@@ -5,22 +5,30 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
 const { celebrate, Joi } = require('celebrate');
 const { NotFoundError } = require('./errors/errors');
 const { handleOtherErrors } = require('./errors/handleOtherErrors');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const {
   createUser,
   login,
 } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 4000 } = process.env;
 
 const app = express();
 
 // набор мидлвееров для защиты
 app.use(helmet());
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
 
 // лимитер запросов
 const limiter = rateLimit({
@@ -32,6 +40,10 @@ app.use(limiter);
 
 // мидлвэр обработки JSON
 app.use(express.json());
+
+app.use(cookieParser());
+// логер запросов
+app.use(requestLogger);
 
 // мидлвэры авторизации и создания пользователя
 app.post('/signin', celebrate({
@@ -75,6 +87,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
   .catch((err) => {
     console.error('Ошибка подключения к MongoDB:', err.message);
   });
+
+// логгер ошибок
+app.use(errorLogger);
 
 // обработчик ошибок
 app.use(errors());
