@@ -45,12 +45,12 @@ app.use(cookieParser());
 // логер запросов
 app.use(requestLogger);
 
-// краш-тест сервера
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
+// // краш-тест сервера
+// app.get('/crash-test', () => {
+//   setTimeout(() => {
+//     throw new Error('Сервер сейчас упадёт');
+//   }, 0);
+// });
 
 // мидлвэры авторизации и создания пользователя
 app.post('/signin', celebrate({
