@@ -31,3 +31,6 @@ IP-адрес: 51.250.84.105
 Frontend [mesto-project.nomoreparties.co](https://mesto-project.nomoreparties.co)
 
 Backend [api.mesto-project.nomoreparties.co](https://api.mesto-project.nomoreparties.co)
+
+## Статус проекта
+Завершён.
